@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Previsão de Saída - Terminal Santo Amaro</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Previsão de Saída - Terminal Santo Amaro</h1>
+  
+  <label for="linha">Selecione a linha:</label>
+  <select id="linha">
+    <option value="4112">4112 - Term. Sto. Amaro / Term. Pq. D. Pedro II</option>
+    <option value="675A">675A - Term. Sto. Amaro / Term. Princ. Isabel</option>
+    <!-- Adicione outras opções de linha conforme necessário -->
+  </select>
+  
+  <button id="consultar">Consultar</button>
+  
+  <div id="resultado"></div>
+
+  <script>
+    $(document).ready(function() {
+      $('#consultar').click(function() {
+        var linhaSelecionada = $('#linha').val();
+        var url = 'http://api.olhovivo.sptrans.com.br/v2.1/Previsao/Linha?codigoLinha=' + linhaSelecionada;
+
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+            xhr.setRequestHeader('Authorization', '9f2887784f4340cabba9a7f7d201cf035a67fc757d516d72c1dabf9e7c2d562f');
+          },
+          success: function(data) {
+            var previsoes = data[0].l;
+            var resultadoHTML = '<h2>Previsão de Saída:</h2>';
+            resultadoHTML += '<ul>';
+            
+            for (var i = 0; i < previsoes.length; i++) {
+              var previsao = previsoes[i];
+              resultadoHTML += '<li>Veículo: ' + previsao.vs + ', Previsão: ' + previsao.t + '</li>';
+            }
+            
+            resultadoHTML += '</ul>';
+            $('#resultado').html(resultadoHTML);
+          },
+          error: function() {
+            $('#resultado').html('<p>Ocorreu um erro ao consultar a previsão.</p>');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
